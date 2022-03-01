@@ -4,7 +4,7 @@ jobs:
       - image: python:3.6                   # similar to "image" in GitLab
     steps:
       - checkout
-      - run: |                              # similar to "script" in GitLab
+      - run: |                             # similar to "script" in GitLab
           pip install -r requirements.txt
           python manage.py check
 
@@ -16,6 +16,16 @@ jobs:
       - run: |
           pip install -r requirements.txt
           python manage.py test taskManager
+  oast:
+    machine: true
+    steps:
+      - checkout
+
+      - run: docker run -v /django.nv:/src --rm hysnsec/safety check -r /src/requirements.txt --json | tee oast-results.json
+
+      - store_artifacts:
+          path: oast-results.json
+          destination: safety-artifact
 
   integration:
     docker:
@@ -41,10 +51,13 @@ workflows:
       - build
       - test:
           requires:
-            - build 
-      - integration:
+            - build
+      - oast:
           requires:
             - test
+      - integration:
+          requires:
+            - oast
       - prod:
           type: approval
           requires:
