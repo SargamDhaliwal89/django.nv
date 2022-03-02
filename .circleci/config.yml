@@ -15,7 +15,7 @@ jobs:
       - run: |
           pip install -r requirements.txt
           python manage.py test taskManager
-   secret_scanning:
+  secret_scanning:
     machine: true
     steps:
       - checkout
