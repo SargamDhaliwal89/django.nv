@@ -19,7 +19,7 @@ jobs:
     machine: true
     steps:
       - checkout
-      - run:
+      - run: |
           command: docker run --rm -v $(pwd):/src hysnsec/trufflehog --repo_path file:///src --json > trufflehog-output.json
           when: on_fail             # Even if the job fails, continue to the next stages
       - store_artifacts:
